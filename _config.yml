@@ -1,6 +1,6 @@
 pygments: true
 paginate: 4
-BASE_PATH: http://filirom1.github.com/pullrequest
+BASE_PATH: /pullrequest
 authors:
   loicfrering:
     fullname: Loïc Frering

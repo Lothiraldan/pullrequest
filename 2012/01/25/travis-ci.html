@@ -1,0 +1,374 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>.::PullRequest.org::. Travis CI l'intégration continue sans effort</title>
+  <meta name="description" content="">
+  <meta name="author" content="PullRequest team">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+
+  <script src="/public/js/libs/modernizr.custom.47336.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="/public/js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+</head>
+
+<body>
+
+  <div id="container">
+    <header>
+      <h1><a href="/" title="Page d'accueil"><img src="/public/img/pullrequest-logo.png" alt="PullRequest"/></a></h1>
+      <a href="http://github.com/pullrequest"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 1;" src="https://a248.e.akamai.net/assets.github.com/img/abad93f42020b733148435e2cd92ce15c542d320/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub"></a>
+    </header>
+
+    <div id="main" role="main">
+      <section id="content">
+        
+<article>
+  <header>
+    <h1><a href="/2012/01/25/travis-ci.html">Travis CI l'intégration continue sans effort</a></h1>
+    <p>
+      <time datetime="2012-01-25" pubdate="pubdate">25 Jan 2012</time>
+      <span class="author"><a href="/authors.html#loicfrering">Loïc Frering</a></span>
+      <span class="comments"><a href="#disqus_thread" title="Voir les commentaires">Commentaires</a></span>
+    </p>
+  </header>
+  <p>Aujourd&#8217;hui je souhaite vous parler d&#8217;un projet qui me tient particulièrement à cœur : <a href='http://travis-ci.org/'>Travis CI</a>, une plateforme d&#8217;intégration continue simple et efficace. C&#8217;est un projet auquel je tiens puisque j&#8217;y contribue et gère le support de PHP avec l&#8217;aide et aux côtés de l&#8217;<a href='https://github.com/travis-ci/'>équipe de contributeurs</a>.</p>
+<p class='center'>
+  <img border='0' src='/public/img/2012-01-25-travis-ci/travis.png' />
+</p>
+<p>Sa devise ? &#8220;A distributed build system for the open source community.&#8221; A l&#8217;initiative de la communauté Ruby, Travis est donc une plateforme d&#8217;intégration continue ouverte et distribuée mise à disposition sous forme de service. Ouverte car tout projet public publié sur Github peut mettre en place son intégration continue sur Travis. Et distribuée car Travis s&#8217;occupe de distribuer les builds de vos projets sur des workers dont nous détaillerons le fonctionnement plus loin.</p>
+
+<h2 id='face_aux_autres_plateformes_dintgration_continue'>Face aux autres plateformes d&#8217;intégration continue</h2>
+
+<p>Et donc quels avantages face aux Jenkins/Hudson, CruiseControl et autres ? En quoi Travis CI se démarque-t-il de la concurrence ?</p>
+
+<p>Tout d&#8217;abord, Travis se présente en mode <strong>service</strong>, aucune installation nécessaire, pas d&#8217;infrastructure à mettre en place ! Travis héberge <strong>gratuitement</strong> l&#8217;intégration continue des projets open source et sa <strong>mise en place est très facile</strong> comme nous le verrons un peu plus loin.</p>
+
+<p>Chaque build de votre projet s&#8217;exécute dans une <strong>machine virtuelle dédiée</strong> : vous disposez d&#8217;un environnement complet pour votre build, vous pouvez installer ce que vous voulez sur cet environnement et cela n&#8217;affectera pas les autres projets buildés par Travis de la même manière que les autres projets ne viendront pas perturber le votre.</p>
+
+<p>De plus chaque build se déroule dans une <strong>sandbox</strong> : après l&#8217;exécution du build, une snapshot réinitialisée de la machine virtuelle restaure son état, aucun risque de casser votre environnement.</p>
+
+<p>Enfin, l&#8217;<strong>infrastructure est distribuée</strong>, tout d&#8217;abord le front est totalement découplé des workers puis Travis provisionne pour vous un pool de workers capable de dépiler le flot de build de tous les projets gérés par Travis. Les charges du front et de chacun des workers sont indépendantes.</p>
+
+<p>Travis supporte actuellement les langages suivants :</p>
+
+<ul>
+<li>Clojure</li>
+
+<li>Erlang</li>
+
+<li>JavaScript avec Node.js</li>
+
+<li>PHP</li>
+
+<li>Ruby</li>
+</ul>
+
+<p>Une des forces de Travis est de permettre de <strong>tester vos applications sur plusieurs versions du langage</strong> que vous utilisez. Vous faites du Ruby ? Vous pouvez tester votre projet sur Ruby 1.8.7, Ruby 1.9.3 ou même Ruby HEAD (version de développement courante), JRuby ou Rubinius. Vous faites du nodejs, hop testez vos packages sur nodejs 0.4 ou 0.6. Vous faites du PHP, vous pouvez tester votre projet sur PHP 5.3.9, 5.4.0RC5 et même 5.2.17 !</p>
+
+<p>Votre application doit être testée sur plusieurs bases de données différentes ? Travis supporte MySQL, PostGreSQL, SQLite, MongoDB, CouchDB, Riak et Redis. En combinant les versions du langage testées et les différents envronnements à votre disposition, vous obtenez une <strong>build matrix</strong> garantissant que vos tests passent sur l&#8217;ensemble de ces combinaisons !</p>
+
+<p>Ainsi il est possible de tester vos projets sur des dizaines de combinaisons de version de langage et de configuration d&#8217;environnement différentes. Voyez par exemple comment <a href='http://travis-ci.org/#!/sinatra/sinatra'>Sinatra joue ses tests sur près de 30 combinaisons différentes</a>. De la même manière, <a href='http://travis-ci.org/#!/FriendsOfSymfony/FOSUserBundle'>FOSUserBundle garanti son bon fonctionnement</a> non seulement sur PHP 5.3 et 5.4 mais aussi sur 3 versions différentes de Symfony2 ! Tout ceci grace à Travis qui permet d&#8217;améliorer de façon significative la robustesse et la fiabilité de nombreux projets open source ! Il est aussi fréquent de découvrir des bugs sur les différentes versions en cours de développements des langages supportés par Travis.</p>
+
+<h2 id='contraintes'>Contraintes</h2>
+
+<p>Bien entendu Travis vient aussi avec quelques contraintes qu&#8217;il faudra mesurer en fonction de ce que vous attendez de votre intégration continue.</p>
+
+<p>Tout d&#8217;abord, Travis est pour l&#8217;instant fortement couplé à Git et Github, il est nécessaire que votre projet soit public sur Github pour profiter de Travis. Cependant le support d&#8217;autres repositories Git et des repositories privés est dans le pipe.</p>
+
+<p>Pour l&#8217;instant et même si toutes les briques de Travis sont open source, il n&#8217;est pas aisé d&#8217;installer un environnement Travis privé et dédié.</p>
+
+<p>Travis a tout d&#8217;abord été conçu pour la communauté open source.</p>
+
+<h2 id='mise_en_place'>Mise en place</h2>
+
+<p>Vous avez un projet sur Github ? La première étape pour mettre en place son itégration continue sur Travis est d&#8217;y placer à la racine un fichier <a href='http://about.travis-ci.org/docs/user/getting-started/#step-three-add-travisyml-file-to-your-repository'>.travis.yml</a> décrivant comment doit se dérouler votre build. La configuration de Travis est très souple et permet la définition des fameuses combinaisons mentionnées un peu plus tôt.</p>
+
+<p>Pour la seconde étape il suffit de vous rendre sur <a href='http://travis-ci.org'>travis-ci.org</a>, de vous authentifier automatiquement via l&#8217;OAuth de Github et vous pourrez activer l&#8217;intégration continue de vos projets, c&#8217;est aussi simple que cela !</p>
+
+<p>Pour plus d&#8217;informations, référez-vous au <a href='http://about.travis-ci.org/docs/user/getting-started/'>Getting Started</a> de la documentation. N&#8217;hésitez pas à suivre les sections spécifiques à votre langage de prédilection.</p>
+
+<h2 id='technologies'>Technologies</h2>
+
+<p>Travis est principalement écrit en Ruby et repose sur un ensemble de technologies modernes et innovantes qui lui donnent les caractéristiques détaillées plus haut :</p>
+
+<ul>
+<li><a href='http://bit.ly/amqp-model-explained'>AMQP</a> avec <a href='http://www.rabbitmq.com/'>RabbitMQ</a> pour le messaging et la distribution des builds. Plusieurs clients sont utilisés en particulier Hot Bunnies, projet dans lequel l&#8217;un des core contributor de Travis est fortement impliqué. Il s&#8217;agit d&#8217;un client JRuby construit sur la base du client Java pour RabbitMQ maintenu par SpringSource, une preuve de la pertinence de la cohabitation JVM/JRuby.</li>
+
+<li><a href='http://jruby.org/'>JRuby</a> pour profiter de certaines librairies Java et des performances</li>
+
+<li><a href='http://vagrantup.com/'>Vagrant</a> pour la gestion des machines virtuelles</li>
+
+<li><a href='http://wiki.opscode.com/display/chef/Home'>Chef</a> pour le provisionning des machines virtuelles</li>
+
+<li><a href='http://en.wikipedia.org/wiki/WebSocket'>WebSockets</a> par l&#8217;intermédiaire de <a href='http://pusher.com/'>Pusher</a> pour la mise à jour des logs de build en temps réel</li>
+
+<li><a href='http://rubyonrails.org/'>Rails</a> pour le front côté serveur</li>
+
+<li><a href='http://emberjs.com/'>Ember.js</a> (successeur de SproutCore 2) pour la RIA côté client</li>
+</ul>
+
+<p>Son architecture étant découplée, une partie des applications qui composent Travis sont déployées sur <a href='http://www.heroku.com/'>Heroku</a> (le site web, le hub) alors que les workers, qui exécutent les builds, tournent sur des machines dédiées fournies généreusement par des sponsors.</p>
+
+<p>Pour plus de détails sur les rouages de Travis, vous pouvez vous référez à cette <a href='http://about.travis-ci.org/docs/dev/overview/'>technical overview</a>.</p>
+
+<h2 id='a_ce_jour'>A ce jour</h2>
+
+<p>A ce jour, Travis lance les builds de plus de 4200 repositories à raison de 2000 builds par jour en moyenne ! L&#8217;intégration continue de projets très prestigieux est gérée par Travis, en particulier :</p>
+
+<ul>
+<li>
+<p>Dans la communauté Ruby :</p>
+
+<ul>
+<li><a href='http://travis-ci.org/#!/rails/rails'>Ruby on Rails</a></li>
+
+<li><a href='http://travis-ci.org/#!/carlhuda/bundler'>Bundler</a></li>
+
+<li><a href='http://travis-ci.org/sinatra/sinatra'>Sinatra</a></li>
+
+<li><a href='http://travis-ci.org/#!/rack/rack'>Rack</a></li>
+
+<li><a href='http://travis-ci.org/#!/rspec/rspec-core'>RSpec</a></li>
+
+<li><a href='http://travis-ci.org/#!/cucumber/cucumber'>Cucumber</a></li>
+
+<li><a href='http://travis-ci.org/#!/nex3/haml'>HAML</a></li>
+
+<li><a href='http://travis-ci.org/#!/nex3/sass'>SASS</a></li>
+
+<li><a href='http://travis-ci.org/#!/rubygems/rubygems'>RubyGems</a></li>
+
+<li><a href='http://travis-ci.org/#!/rubygems/rubygems.org'>rubygems.org</a></li>
+
+<li><a href='http://travis-ci.org/#!/mongoid/mongoid'>Mongoid</a></li>
+
+<li><a href='http://travis-ci.org/#!/rubinius/rubinius'>Rubinius</a></li>
+
+<li><a href='http://travis-ci.org/#!/thoughtbot/factory_girl'>Factory Girl</a></li>
+
+<li><a href='http://travis-ci.org/#!/spree/spree'>Spree</a></li>
+
+<li><a href='http://travis-ci.org/#!/plataformatec/devise'>Devise</a></li>
+
+<li><a href='http://travis-ci.org/#!/ruby-amqp/amqp'>amqp gem</a></li>
+
+<li>et même le miroir GitHub de <a href='http://travis-ci.org/#!/ruby/ruby'>CRuby (MRI) itself</a></li>
+</ul>
+</li>
+
+<li>
+<p>Dans la communauté JavaScript :</p>
+
+<ul>
+<li><a href='http://travis-ci.org/joyent/node'>Node.js</a></li>
+
+<li><a href='http://travis-ci.org/#!/isaacs/npm'>NPM</a></li>
+
+<li><a href='http://travis-ci.org/#!/visionmedia/express'>Express</a></li>
+
+<li><a href='http://travis-ci.org/#!/cloudhead/vows'>Vows</a></li>
+
+<li><a href='http://travis-ci.org/#!/visionmedia/mocha'>Mocha</a></li>
+
+<li><a href='http://travis-ci.org/#!/emberjs/ember.js'>Ember.js</a> (ex. SproutCore 2)</li>
+
+<li><a href='http://travis-ci.org/#!/Shopify/batman'>Batman.js</a></li>
+
+<li><a href='https://github.com/flatiron'>flatiron (certains sous-projets)</a></li>
+</ul>
+</li>
+
+<li>
+<p>Dans la communauté PHP :</p>
+
+<ul>
+<li><a href='http://travis-ci.org/#!/symfony/symfony'>Symfony2</a></li>
+
+<li><a href='http://travis-ci.org/#!/doctrine/doctrine2'>Doctrine2</a></li>
+
+<li><a href='http://travis-ci.org/#!/composer/composer'>Composer</a></li>
+
+<li><a href='http://travis-ci.org/#!/Behat/Behat'>Behat</a></li>
+
+<li>et de nombreux bundles Symfony2</li>
+</ul>
+</li>
+
+<li>
+<p>Dans la communauté Clojure :</p>
+
+<ul>
+<li><a href='http://travis-ci.org/#!/technomancy/leiningen'>Leiningen</a></li>
+
+<li><a href='http://travis-ci.org/#!/reiddraper/knockbox'>Knockbox</a></li>
+
+<li><a href='http://travis-ci.org/#!/michaelklishin/langohr'>Langohr</a></li>
+
+<li><a href='http://travis-ci.org/#!/michaelklishin/monger'>Monger</a></li>
+
+<li><a href='http://travis-ci.org/#!/michaelklishin/neocons'>Neocons</a></li>
+
+<li><a href='http://travis-ci.org/#!/reiddraper/sumo'>Sumo</a></li>
+</ul>
+</li>
+
+<li>
+<p>Dans la communauté Erlang :</p>
+
+<ul>
+<li><a href='http://travis-ci.org/#!/extend/cowboy'>Cowboy</a></li>
+
+<li><a href='http://travis-ci.org/#!/josevalim/elixir'>Elixir</a></li>
+</ul>
+</li>
+
+<li>
+<p>On y trouve même quelques plugins Eclipse qui profitent de la disponibilité de Maven sur la plateforme :</p>
+
+<ul>
+<li><a href='http://travis-ci.org/#!/pulse00/Symfony-2-Eclipse-Plugin'>Symfony2 Eclipse Plugin</a></li>
+
+<li><a href='http://travis-ci.org/#!/pulse00/Twig-Eclipse-Plugin'>Twig Eclipse Plugin</a></li>
+</ul>
+</li>
+</ul>
+
+<h2 id='conclusion'>Conclusion</h2>
+
+<p>Nous avons vu ici ce qu&#8217;est Travis CI et comment il se positionne vis-à-vis des autres systèmes d&#8217;intégration continue. Vous avez un projet open source sur Github ? Le langage est supporté par Travis ? Alors allez vite installer son intégration continue sur Travis si ce n&#8217;est pas déjà fait !</p>
+
+<p>Pour plus d&#8217;informations, n&#8217;hésitez pas à parcourir la <a href='http://about.travis-ci.org/docs/'>documentation</a>, à suivre <a href='https://twitter.com/travisci'>@Travis</a> sur Twitter ou à nous rejoindre sur le channel #travis de irc.freenode.net.</p>
+
+<p>Merci à <a href='https://twitter.com/michaelklishin'>Michael Klishin</a> pour la relecture approfondie et à tous les <a href='https://github.com/travis-ci/'>contributeurs Travis</a> qui participent à la mise à disposition de cet outil si pratique !</p>
+  <footer>
+    <section class="tags">
+      <span>Tags :</span>
+<ul>
+  
+    <li>
+        <a href="tags.html#ci" title="Voir les posts ayant le tag ci">ci</a>
+    </li>
+  
+    <li>
+        <a href="tags.html#travis" title="Voir les posts ayant le tag travis">travis</a>
+    </li>
+  
+    <li>
+        <a href="tags.html#php" title="Voir les posts ayant le tag php">php</a>
+    </li>
+  
+    <li>
+        <a href="tags.html#nodejs" title="Voir les posts ayant le tag nodejs">nodejs</a>
+    </li>
+  
+    <li>
+        <a href="tags.html#ruby" title="Voir les posts ayant le tag ruby">ruby</a>
+    </li>
+  
+    <li>
+        <a href="tags.html#clojure" title="Voir les posts ayant le tag clojure">clojure</a>
+    </li>
+  
+    <li>
+        <a href="tags.html#erlang" title="Voir les posts ayant le tag erlang">erlang</a>
+    </li>
+  
+</ul>
+
+    </section>
+    <section id="disqus_thread" class="comments">
+      <script type="text/javascript">
+  var disqus_shortname = 'pullrequest';
+  var disqus_identifier = '/2012/01/25/travis-ci';
+  $.getScript("http://pullrequest.disqus.com/embed.js");
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus</a>.</noscript>
+
+    </section>
+  </footer>
+</article>
+
+      </section><!--
+
+   --><aside>
+        <section id="about">
+          <h1>A propos</h1>
+          <p>PullRequest est un blog de développeurs ouvert à toute contribution appropriée.</p>
+        </section>
+        <section id="follow">
+          <h1>Suivez nous!</h1>
+          <ul>
+            <li>
+              <a href="http://twitter.com/pullrequest" class="twitter-follow-button" data-show-count="false" data-lang="fr">Follow @pullrequest</a>
+              <script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
+            </li>
+            <li class="feed">
+              <a rel="alternate" type="application/rss+xml" href="http://feeds.feedburner.com/pullrequest/blog-posts">abonnement RSS</a>
+            </li>
+          </ul>
+        </section>
+        <section id="contribute">
+          <h1>Participer</h1>
+          <p>
+            Les articles sont écrits en <a href="http://daringfireball.net/projects/markdown/syntax">MarkDown</a> et stockés dans un repository Git sur <a href="http://github.com/pullrequest/pullrequest.github.com">Github</a>.
+            N'hésitez pas à <strong>forker</strong> puis à faire une <strong><a href="https://github.com/pullrequest/pullrequest.github.com/pull/new/master">Pull Request</a></strong> ;)
+          </p>
+        </section>
+        <section id="licensing">
+          <h1>Licence</h1>
+          <p>
+            Les articles sont mis à disposition selon les termes de la <a rel="license" href="http://creativecommons.org/licenses/by/2.0/fr/">Licence Creative Commons Paternité 2.0 France</a>.
+            <a rel="license" href="http://creativecommons.org/licenses/by/2.0/fr/">
+              <br><img alt="Contrat Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by/2.0/fr/88x31.png" />
+            </a>
+          </p>
+        </section>
+        <section id="opensource">
+          <h1>OpenSource</h1>
+          <p>Les auteurs de PullRequest sont à l'origine, ou contributeurs, entre autres, de ces projets:</p>
+          <ul>
+            <li><a href="http://openscales.org">OpenScales</a></li>
+            <li><a href="http://resthub.org">RestHub</a></li>
+            <li><a href="https://github.com/loicfrering/LosoBundle">LosoBundle</a></li>
+            <li><a href="https://github.com/loicfrering/losolib">LoSoLib</a></li>
+            <li><a href="https://bitbucket.org/feugy/myth">Myth</a></li>
+          </ul>
+        </section>
+      </aside>
+
+    </div>
+
+    <footer>
+      <small id="legal">© 2011 pullrequest.org</small>
+      <small id="poweredby">Propulsé par <a href="http://jekyllrb.com">Jekyll</a></small>
+    </footer>
+  </div>
+
+  <script defer src="/public/js/tags.js"></script>
+  <script defer src="/public/js/authors.js"></script>
+
+  <script>
+    var _gaq=[["_setAccount","UA-22833612-1"],["_trackPageview"]];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
+    g.src=("https:"==location.protocol?"//ssl":"//www")+".google-analytics.com/ga.js";
+    s.parentNode.insertBefore(g,s)}(document,"script"));
+  </script>
+
+  <!--[if lt IE 7 ]>
+  <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+  <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+  <![endif]-->
+
+</body>
+</html>

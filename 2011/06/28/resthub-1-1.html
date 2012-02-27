@@ -1,0 +1,264 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>.::PullRequest.org::. RESThub 1.1</title>
+  <meta name="description" content="">
+  <meta name="author" content="PullRequest team">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+
+  <script src="/public/js/libs/modernizr.custom.47336.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="/public/js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+</head>
+
+<body>
+
+  <div id="container">
+    <header>
+      <h1><a href="/" title="Page d'accueil"><img src="/public/img/pullrequest-logo.png" alt="PullRequest"/></a></h1>
+      <a href="http://github.com/pullrequest"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 1;" src="https://a248.e.akamai.net/assets.github.com/img/abad93f42020b733148435e2cd92ce15c542d320/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub"></a>
+    </header>
+
+    <div id="main" role="main">
+      <section id="content">
+        
+<article>
+  <header>
+    <h1><a href="/2011/06/28/resthub-1-1.html">RESThub 1.1</a></h1>
+    <p>
+      <time datetime="2011-06-28" pubdate="pubdate">28 Jun 2011</time>
+      <span class="author"><a href="/authors.html#sdeleuze">Sébastien Deleuze</a></span>
+      <span class="comments"><a href="#disqus_thread" title="Voir les commentaires">Commentaires</a></span>
+    </p>
+  </header>
+  <p>Après 6 mois de développement, j&#8217;ai le plaisir de vous annoncer la sortie de <a href='http://resthub.org'>RESThub</a> 1.1. Le framework a beaucoup évolué ces derniers mois, notamment suite à son utilisation sur de gros projets qui ont permis, sur base de retours développeurs, une amélioration significative du framework.</p>
+
+<p>La documentation, les exemples ainsi que les modèles de projet sont disponibles sur <a href='http://resthub.org'>http://resthub.org</a>.</p>
+
+<h2 id='2_projets_distincts'>2 projets distincts</h2>
+
+<p>Comme annoncé il y a quelques temps, RESThub est maintenant constitué de 2 projets complémentaires mais indépendants :</p>
+
+<ul>
+<li><a href='http://resthub.org/java/'>RESThub</a> : une stack Java basée sur Spring 3.0 et sur des webservices REST JAX-RS qui vise à fournir un socle cohérent pour le développement d&#8217;applications Java modulaires</li>
+
+<li><a href='http://resthub.org/javascript/'>RESThub JS</a> : une stack Javascript basée sur jQuery, visant à fournir l&#8217;outillage et les repères nécessaires au développement d&#8217;applications professionnelles (cf. l&#8217;excellent article <a href='http://addyosmani.com/blog/large-scale-jquery/'>Building Large-Scale jQuery Applications</a>). Elle peut se câbler sur n&#8217;importe quelle technologie serveur qui expose des webservices REST (Java, Scala, Python, Ruby, NodeJS).</li>
+</ul>
+
+<p>Les 2 projets suivent pour l&#8217;instant les mêmes versions.</p>
+
+<h2 id='changelog'>Changelog</h2>
+
+<h3 id='resthub_11'>RESThub 1.1</h3>
+
+<ul>
+<li>La <a href='http://resthub.org/java/'>documentation</a> a été complétement retravaillée et couvre maintenant l&#8217;ensemble des fonctionnalités disponibles dans le framework</li>
+
+<li>Déjà présent dans la version 1.0, une fonctionnalité clé de RESThub 1.1 est de scanner vos entités JPA dans le classpath afin de les gérer via une seule persistence unit, ce qui n&#8217;est pas possible avec JPA. Cette fonctionnalité permet un découpage fonctionnel plus simple de vos applications, notamment via des projets multi-modules Maven où chaque module correspond à une fonctionnalité automatiquement découverte dans le classpath</li>
+
+<li>Une classe SerializationHelper vous permet de tester simplement, c&#8217;est à dire dans avoir à lancer un serveur Jersey complet, la sérialisation/désérialisation de vos objets en XML et JSON. C&#8217;est primordial afin de vérifier que ces opérations ne provoquent de boucles infinies ou d&#8217;erreur liées au polymorphisme</li>
+
+<li>Nouvelle archetype resthub-archetype-js-webapp qui propose une exemple simple d&#8217;application RESThub + RESThub JS. Cet exemple contient maintenant un Repository et un Controller Javascript qui font appel au webservice REST implémenté en Java</li>
+
+<li>Une intégration Spring DBUnit permet une gestion simple et puissante des données de tests (jeux de donnée propres à chaque méthode de test)</li>
+
+<li>Le client Jersey intégré est maintenant basé sur un moteur HttpClient 4</li>
+
+<li>La sérialisation JSON a été changée. Toujours basée sur l&#8217;excellent <a href='http://jackson.codehaus.org/'>Jackson</a> (mis à jour pour l&#8217;occasion en version 1.7), les annotations Jackson sont maintenant utilisées par défaut au lieu des annotations JAXB. Ces dernières étaient pratiques (une seule annotation pour les sérialisations XML et JSON) mais pas assez souples pour les besoins liés au développement d&#8217;application riches Javascripts</li>
+
+<li>La <a href='http://docs.jboss.org/hibernate/annotations/3.5/reference/en/html_single/#ann-setup-properties'>nouvelle stratégie de génération d&#8217;ID Hibernate</a> est désormais activée par défaut</li>
+
+<li>Un nouveau système de gestion des properties, basé sur les PropertyPlaceHolder de Spring, permet de définir simplement des valeurs par défaut (idéal pour l&#8217;environnement local), qui peuvent être écrasée par un fichier properties dans le classpath s&#8217;il existe. Ce système permet nativement une injection par annotation (@Value)</li>
+
+<li>Le serveur <a href='http://tools.ietf.org/html/draft-ietf-oauth-v2'>OAuth2</a> est basée sur l&#8217;implémentation <a href='http://static.springsource.org/spring-security/oauth/oauth2.html'>Spring Security OAuth2</a></li>
+
+<li>Une gestion de la sécurité de type ACL (droits portant sur un objet en particulier, pas seulement des rôles globaux à l&#8217;application) implémentée via le module resthub-identity-acl. Ce dernier est basé sur Spring Security ACL</li>
+
+<li>Un ContextLoader pemrettant de désactiver la validation des fichiers applicationContext.xml (comportement par défaut de Spring 3, non désactivable) est fourni, afin de permettr l&#8217;utilisation d&#8217;expression dynamique comme ${param1}</li>
+
+<li>Les classes génériques (test, dao, service, controller) sont plus puissantes et peuvent être étendues plus facilement. Par exemple, les classes Controller génériques REST utilisent désormais uniquement des types natifs (vos objets métiers) avec des ExceptionMapper Jersey.</li>
+</ul>
+
+<p>Côté licence, RESThub passe de la license LGPL3 à la license Apache 2.</p>
+
+<h3 id='resthub_js_11'>RESThub JS 1.1</h3>
+
+<p>La <a href='http://resthub.org/javascript/'>stack Javascript</a> a été complétement réécrite afin de ne plus dépendre de <a href='http://sammyjs.org/'>Sammy.JS</a> qui comportait de nombreuses fonctionnalités inutiles. Nous avons donc réimplémenté une gestion des routes qui garde le même principe, mais qui est beaucoup plus légère. L&#8217;autre point gênant avec Sammy.JS était sa notion de contexte, assez problématique quand on essaye de développer une application modulaire utilisant des composants.</p>
+
+<p>La nouvelle stack RESThub JS 1.1 est composés des modules suivants développés sur une base <a href='http://jquery.com/'>jQuery 1.6</a> et <a href='http://jqueryui.com/'>jQuery UI 1.8</a> :</p>
+
+<ul>
+<li>Chargement des scripts : gestion des dépendances transitives et de l&#8217;ordre de chargement des fichiers Javascript (basé sur <a href='http://requirejs.org'>RequireJS</a>)</li>
+
+<li>Logging : fonctionnalité de gestion des logs conforme à la norme CommonJS et proposant un fonctionnel se rapprochant de ce qu&#8217;on connait dans le monde Java avec log4j</li>
+
+<li>Routes : gestion des routes à la Sammy.JS, permettant l&#8217;utilisation de marques pages même sur une interface riche. Actuellement basé sur les évènements hashchange, le support du Push State HTML5 est prévu prochainement</li>
+
+<li>Bus d&#8217;évènement : bus d&#8217;évènement permettant de découpler les fonctionnalités de votre application (principe classique publish/subscribe)</li>
+
+<li>Templating : Dynamisation de templates côté client, basé sur <a href='http://api.jquery.com/jquery.tmpl/'>jQuery Tmpl</a></li>
+
+<li>Repositories : permet de regrouper tous les échanges avec le serveur. Très utile pour Mocker votre application JS pour la tester sans serveur</li>
+
+<li>Controller : implémentation côté client du pattern MVC, librement inspiré de Javascript MVC</li>
+
+<li>Class : héritage en Javascript, basé sur la version améliorée par Javascript MVC du code proposé par John Resig dans son article <a href='http://ejohn.org/blog/simple-javascript-inheritance/'>Simple JavaScript Inheritance</a></li>
+
+<li>Stockage : abstrait les différents moyens de stockage disponibles dans le navigateur (cookie, localstorage, sessionstorage &#8230;)</li>
+
+<li>Internationalisation : gestion de l&#8217;internationalisation (similaire à ce qui se fait en Java)</li>
+</ul>
+
+<p>Côté licence, RESThub JS passe de la license LGPL3 à la license New BSD, beaucoup plus souple en termes de conditions d&#8217;utilisation.</p>
+
+<h2 id='github'>GitHub</h2>
+
+<p>Auparavant hébergées sur <a href='http://bitbucket.com/'>BitBucket</a>, les sources du projet sont désormais hébergées sur <a href='http://github.com/pullrequest'>GitHub</a> afin d&#8217;augmenter la visibilité du projet, faciliter les contributions et bénéficier des services bien supérieurs à BitBucket (pull request, issue tracker &#8230;).</p>
+
+<p>Le détail des versions est désormais détaillé sur GitHub, comme c&#8217;est le cas pour la mise à jour mineure 1.1.1 qui vient d&#8217;être publiée :</p>
+
+<ul>
+<li><a href='https://github.com/pullrequest/resthub/issues?milestone=&amp;state=closed1'>RESThub 1.1.1</a></li>
+
+<li><a href='https://github.com/pullrequest/resthub-js/issues?milestone=2&amp;state=closed'>RESThub JS 1.1.1</a></li>
+</ul>
+
+<h2 id='whats_next'>What&#8217;s next?</h2>
+
+<p>La roadmap RESThub 2.0 sera présentée prochainement sur <a href='http://pullrequest.org'>pullrequest.org</a> par <a href='http://twitter.com/loicfrering/'>@loicfrering</a>. Je vous donne quelques éléments pour patienter :</p>
+
+<ul>
+<li>Basé sur Spring 3.1</li>
+
+<li>Passage d&#8217;un modèle de 3 couches à 2 couches</li>
+
+<li>Utilisation massive de Spring Data (basés relationnels et NoSql)</li>
+
+<li>Mise à jour de bases de données incrémentales</li>
+
+<li>Nouvelle version de l&#8217;exemple booking en Scala</li>
+
+<li>Monitoring</li>
+
+<li>Profils (dev, prod) modifiables à chaud et par instance</li>
+
+<li>Côté RESThub JS : support du push state, bus de message STOMP + Websocket, support de Coffee Script</li>
+</ul>
+
+<p>N&#8217;hésitez pas à proposez vos idées ou à contribuer &#8230;</p>
+  <footer>
+    <section class="tags">
+      <span>Tags :</span>
+<ul>
+  
+    <li>
+        <a href="tags.html#resthub" title="Voir les posts ayant le tag resthub">resthub</a>
+    </li>
+  
+    <li>
+        <a href="tags.html#java" title="Voir les posts ayant le tag java">java</a>
+    </li>
+  
+    <li>
+        <a href="tags.html#javascript" title="Voir les posts ayant le tag javascript">javascript</a>
+    </li>
+  
+</ul>
+
+    </section>
+    <section id="disqus_thread" class="comments">
+      <script type="text/javascript">
+  var disqus_shortname = 'pullrequest';
+  var disqus_identifier = '/2011/06/28/resthub-1-1';
+  $.getScript("http://pullrequest.disqus.com/embed.js");
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus</a>.</noscript>
+
+    </section>
+  </footer>
+</article>
+
+      </section><!--
+
+   --><aside>
+        <section id="about">
+          <h1>A propos</h1>
+          <p>PullRequest est un blog de développeurs ouvert à toute contribution appropriée.</p>
+        </section>
+        <section id="follow">
+          <h1>Suivez nous!</h1>
+          <ul>
+            <li>
+              <a href="http://twitter.com/pullrequest" class="twitter-follow-button" data-show-count="false" data-lang="fr">Follow @pullrequest</a>
+              <script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
+            </li>
+            <li class="feed">
+              <a rel="alternate" type="application/rss+xml" href="http://feeds.feedburner.com/pullrequest/blog-posts">abonnement RSS</a>
+            </li>
+          </ul>
+        </section>
+        <section id="contribute">
+          <h1>Participer</h1>
+          <p>
+            Les articles sont écrits en <a href="http://daringfireball.net/projects/markdown/syntax">MarkDown</a> et stockés dans un repository Git sur <a href="http://github.com/pullrequest/pullrequest.github.com">Github</a>.
+            N'hésitez pas à <strong>forker</strong> puis à faire une <strong><a href="https://github.com/pullrequest/pullrequest.github.com/pull/new/master">Pull Request</a></strong> ;)
+          </p>
+        </section>
+        <section id="licensing">
+          <h1>Licence</h1>
+          <p>
+            Les articles sont mis à disposition selon les termes de la <a rel="license" href="http://creativecommons.org/licenses/by/2.0/fr/">Licence Creative Commons Paternité 2.0 France</a>.
+            <a rel="license" href="http://creativecommons.org/licenses/by/2.0/fr/">
+              <br><img alt="Contrat Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by/2.0/fr/88x31.png" />
+            </a>
+          </p>
+        </section>
+        <section id="opensource">
+          <h1>OpenSource</h1>
+          <p>Les auteurs de PullRequest sont à l'origine, ou contributeurs, entre autres, de ces projets:</p>
+          <ul>
+            <li><a href="http://openscales.org">OpenScales</a></li>
+            <li><a href="http://resthub.org">RestHub</a></li>
+            <li><a href="https://github.com/loicfrering/LosoBundle">LosoBundle</a></li>
+            <li><a href="https://github.com/loicfrering/losolib">LoSoLib</a></li>
+            <li><a href="https://bitbucket.org/feugy/myth">Myth</a></li>
+          </ul>
+        </section>
+      </aside>
+
+    </div>
+
+    <footer>
+      <small id="legal">© 2011 pullrequest.org</small>
+      <small id="poweredby">Propulsé par <a href="http://jekyllrb.com">Jekyll</a></small>
+    </footer>
+  </div>
+
+  <script defer src="/public/js/tags.js"></script>
+  <script defer src="/public/js/authors.js"></script>
+
+  <script>
+    var _gaq=[["_setAccount","UA-22833612-1"],["_trackPageview"]];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
+    g.src=("https:"==location.protocol?"//ssl":"//www")+".google-analytics.com/ga.js";
+    s.parentNode.insertBefore(g,s)}(document,"script"));
+  </script>
+
+  <!--[if lt IE 7 ]>
+  <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+  <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+  <![endif]-->
+
+</body>
+</html>

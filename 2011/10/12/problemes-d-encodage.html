@@ -1,0 +1,284 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>.::PullRequest.org::. Problèmes d'encodage dans une application web</title>
+  <meta name="description" content="">
+  <meta name="author" content="PullRequest team">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+
+  <script src="/public/js/libs/modernizr.custom.47336.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="/public/js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+</head>
+
+<body>
+
+  <div id="container">
+    <header>
+      <h1><a href="/" title="Page d'accueil"><img src="/public/img/pullrequest-logo.png" alt="PullRequest"/></a></h1>
+      <a href="http://github.com/pullrequest"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 1;" src="https://a248.e.akamai.net/assets.github.com/img/abad93f42020b733148435e2cd92ce15c542d320/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub"></a>
+    </header>
+
+    <div id="main" role="main">
+      <section id="content">
+        
+<article>
+  <header>
+    <h1><a href="/2011/10/12/problemes-d-encodage.html">Problèmes d'encodage dans une application web</a></h1>
+    <p>
+      <time datetime="2011-10-12" pubdate="pubdate">12 Oct 2011</time>
+      <span class="author"><a href="/authors.html#bclozel">Brian Clozel</a></span>
+      <span class="comments"><a href="#disqus_thread" title="Voir les commentaires">Commentaires</a></span>
+    </p>
+  </header>
+  <p>Il n&#8217;y a pas de solution miracle lorsqu&#8217;on a un problème d&#8217;encodage avec son application web. Mais avec un peu de méthode et quelques pistes, on peut en retrouver la/les sources(s) et les corriger.</p>
+
+<h2 id='pour_bien_comprendre'>Pour bien comprendre</h2>
+
+<p>Tous les développeurs devraient lire au moins une fois ces articles:</p>
+
+<ul>
+<li><a href='http://diveintopython3.ep.io/strings.html#htmlboring-stuff'>les chaînes de caractères et l&#8217;encodage</a> (les paragraphes 4.1 et 4.2 suffisent)</li>
+
+<li><a href='http://joelonsoftware.com/Articles/Unicode.html'>Unicode</a></li>
+</ul>
+
+<p>Avec ces articles vous comprendrez (entre autres!) pourquoi <strong>vous rencontrez ce problème</strong>, pourquoi <strong>il faut toujours connaître l&#8217;encodage d&#8217;un texte</strong> et pourquoi <strong>l&#8217;UTF-8 vous sauvra</strong>.</p>
+
+<p>Vous le savez maintenant, <em>détecter l&#8217;encodage</em> d&#8217;un texte est une histoire de statistiques. Les outils suivants ne peuvent souvent que <em>deviner</em> l&#8217;encodage d&#8217;un texte qu&#8217;on leur donne:</p>
+
+<ul>
+<li><code>file -i file.txt</code>: un outil unix se basant sur les headers de fichier</li>
+
+<li><code>enca</code>: aussi un outil unix, mais celui-ci se base sur le contenu du fichier</li>
+
+<li><a href='http://chardet.feedparser.org/'>chardet</a>, outil python qui se base aussi sur le contenu</li>
+</ul>
+
+<p>Même chose pour vos éditeurs texte et navigateurs préférés: souvent, ils essaient seulement de deviner l&#8217;encodage ou bien font du &#8220;best effort&#8221;.</p>
+
+<h2 id='les_outils_indispensables'>Les outils indispensables</h2>
+
+<p>Pour toutes les questions d&#8217;encodage, oubliez vos éditeurs de texte favoris et ne faites confiance qu&#8217;aux outils suivants:</p>
+
+<ul>
+<li>éditeurs hexa, comme vim: il est de base sur toutes les machines UNIX et devrait être <a href='http://www.vim.org/download.php#pc'>sur votre poste de travail windows</a>!</li>
+
+<li>des traffic dumpers, comme TCPdump</li>
+
+<li>des &#8220;strings témoins&#8221; (chaînes de caractères avec différents accents, pour tester chaque étape)</li>
+</ul>
+
+<p>Astuce pour l&#8217;édition Hexa dans vim:</p>
+
+<pre><code>gvim -b myfile.txt
+:%!xxd (pour voir la version en Hexa)
+:%!xxd -r (pour reconvertir depuis l&#39;Hexa)</code></pre>
+
+<h2 id='rgler_les_problmes_dencodage'>Régler les problèmes d&#8217;encodage</h2>
+
+<h3 id='plan_densemble'>Plan d&#8217;ensemble</h3>
+
+<p>Voici une architecture &#8220;classique&#8221; d&#8217;une application web Java. Dans la suite de l&#8217;article, nous allons suivre les maillons de cette chaîne pour trouver les problèmes d&#8217;encodage.</p>
+
+<p><img alt='Architecture dune webapp' src='/public/img/2011-10-12-problemes-d-encodage/encoding_problems.png' /></p>
+
+<h3 id='encodage_ct_base_de_donnes'>Encodage côté base de données</h3>
+
+<p>D&#8217;abord, vérifier que votre schéma/vos tables utilisent bien le charset UTF-8:</p>
+
+<pre><code>SELECT default_character_set_name FROM information_schema.SCHEMATA S
+WHERE schema_name = &#39;your_schema_name&#39;
+use your_schema_name;
+SHOW TABLE STATUS;</code></pre>
+
+<p>En cas de problème, supprimer et recréer votre schema avec un script SQL (ou votre ORM):</p>
+
+<pre><code>drop table if exists mydatabase_table;
+create table mydatabase_table ( [...] )
+engine=innodb default charset=utf8 collate=utf8_unicode_ci;</code></pre>
+
+<p>Attention, ne pas oublier d&#8217;indiquer le charset par défaut dans la ligne de commande:</p>
+
+<pre><code>mysql --default-character-set=utf8 myutf8_db &lt; mydatabase.sql</code></pre>
+
+<p>Si votre base de données a le bon encodage, mais contient des données mal encodées, alors référez vous aux rubriques suivantes.</p>
+
+<h3 id='connecteur_sql'>Connecteur SQL</h3>
+
+<p>Cette option n&#8217;est pas obligatoire, mais pourrait être la source d&#8217;un problème d&#8217;encodage; il faut alors vérifier la syntaxe de l&#8217;URL de connexion à la base de données:</p>
+
+<pre><code>connection.jdbc.url = jdbc:mysql://database.pullrequest.org:3306/your_schema_name?autoReconnect=true&amp;amp;useUnicode=true&amp;amp;characterEncoding=UTF-8</code></pre>
+
+<h2 id='connecteur_jk'>Connecteur JK</h2>
+
+<p>Si vous utilisez un connecteur JK entre Apache et Tomcat, des URLs mal encodées peuvent poser problème. Il faut alors modifier la configuration du connecteur pour bien encoder les caractères non-ASCII dans les URLs:</p>
+
+<pre><code>&lt;connector enablelookups=&quot;false&quot; port=&quot;10108&quot; protocol=&quot;AJP/1.3&quot; redirectport=&quot;8443&quot; uriencoding=&quot;UTF-8&quot;&gt;</code></pre>
+
+<h3 id='headers_http_client'>Headers HTTP client</h3>
+
+<p>Parfois, les clients web n&#8217;envoient pas les bons Headers HTTP indiquant l&#8217;encoding des requêtes. C&#8217;est une source de données utilisateurs mal encodées en base de données; l&#8217;utilisation d&#8217;un encoding filter doit résoudre le problème.</p>
+
+<pre><code>&lt;filter&gt;
+&lt;filter-name&gt;charsetEncodingFilter&lt;/filter-name&gt;
+&lt;filter-class&gt;org.springframework.web.filter.CharacterEncodingFilter&lt;/filter-class&gt;
+&lt;init-param&gt;
+  &lt;param-name&gt;encoding&lt;/param-name&gt;
+  &lt;param-value&gt;UTF-8&lt;/param-value&gt;
+&lt;/init-param&gt;
+&lt;/filter&gt;
+
+&lt;filter-mapping&gt;
+  &lt;filter-name&gt;charsetEncodingFilter&lt;/filter-name&gt;
+  &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
+&lt;/filter-mapping&gt;</code></pre>
+
+<h3 id='les_headers_http_serveur'>Les headers HTTP serveur</h3>
+
+<p>Il faut alors vérifier les Headers des réponses envoyées par les différents serveurs de l&#8217;application: Tomcat, Apache/Nginx, etc. Pas d&#8217;autre solution, il faut requêter ressources statiques (JS), APIs serveur, page HTML et vérifier le header <code>Content-type</code>.</p>
+
+<p>Les headers HTTP peuvent être écrits par:</p>
+
+<ul>
+<li>l&#8217;application web elle-même</li>
+
+<li>les modules apache</li>
+
+<li>le conteneur d&#8217;application Java</li>
+</ul>
+
+<h3 id='les_balises_html'>Les balises HTML</h3>
+
+<p>Toutes vos pages HTML doivent spécifier un encoding! En HTML5:</p>
+
+<pre><code>&lt;!doctype html&gt;
+&lt;head&gt;
+  &lt;meta charset=&quot;utf-8&quot;&gt;</code></pre>
+
+<h3 id='les_fichiers_contenant_des_labels'>Les fichiers contenant des labels</h3>
+
+<p>Même si votre IDE ou votre éditeur texte indique un encoding UTF-8, <em>il ne faut pas trop lui faire confiance</em>.</p>
+
+<p>Utiliser une string de test et vérifier en Hexa:</p>
+
+<pre><code>“Iñtërnâtiônàlizætiøn”
+E2 80 9C 49 C3 B1 74 C3 AB 72 6E C3 A2 74 69 C3 B4 6E C3 A0 6C 69 7A C3 A6 74 69 C3 B8 6E E2 80 9D</code></pre>
+
+<p><em>Autres conseils avec:</em> <a href='http://rentzsch.tumblr.com/post/9133498042/howto-use-utf-8-throughout-your-web-stack'>How to use UTF-8 troughout your web stack</a></p>
+  <footer>
+    <section class="tags">
+      <span>Tags :</span>
+<ul>
+  
+    <li>
+        <a href="tags.html#utf-8" title="Voir les posts ayant le tag utf-8">utf-8</a>
+    </li>
+  
+    <li>
+        <a href="tags.html#encodage" title="Voir les posts ayant le tag encodage">encodage</a>
+    </li>
+  
+    <li>
+        <a href="tags.html#webapp" title="Voir les posts ayant le tag webapp">webapp</a>
+    </li>
+  
+</ul>
+
+    </section>
+    <section id="disqus_thread" class="comments">
+      <script type="text/javascript">
+  var disqus_shortname = 'pullrequest';
+  var disqus_identifier = '/2011/10/12/problemes-d-encodage';
+  $.getScript("http://pullrequest.disqus.com/embed.js");
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus</a>.</noscript>
+
+    </section>
+  </footer>
+</article>
+
+      </section><!--
+
+   --><aside>
+        <section id="about">
+          <h1>A propos</h1>
+          <p>PullRequest est un blog de développeurs ouvert à toute contribution appropriée.</p>
+        </section>
+        <section id="follow">
+          <h1>Suivez nous!</h1>
+          <ul>
+            <li>
+              <a href="http://twitter.com/pullrequest" class="twitter-follow-button" data-show-count="false" data-lang="fr">Follow @pullrequest</a>
+              <script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
+            </li>
+            <li class="feed">
+              <a rel="alternate" type="application/rss+xml" href="http://feeds.feedburner.com/pullrequest/blog-posts">abonnement RSS</a>
+            </li>
+          </ul>
+        </section>
+        <section id="contribute">
+          <h1>Participer</h1>
+          <p>
+            Les articles sont écrits en <a href="http://daringfireball.net/projects/markdown/syntax">MarkDown</a> et stockés dans un repository Git sur <a href="http://github.com/pullrequest/pullrequest.github.com">Github</a>.
+            N'hésitez pas à <strong>forker</strong> puis à faire une <strong><a href="https://github.com/pullrequest/pullrequest.github.com/pull/new/master">Pull Request</a></strong> ;)
+          </p>
+        </section>
+        <section id="licensing">
+          <h1>Licence</h1>
+          <p>
+            Les articles sont mis à disposition selon les termes de la <a rel="license" href="http://creativecommons.org/licenses/by/2.0/fr/">Licence Creative Commons Paternité 2.0 France</a>.
+            <a rel="license" href="http://creativecommons.org/licenses/by/2.0/fr/">
+              <br><img alt="Contrat Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by/2.0/fr/88x31.png" />
+            </a>
+          </p>
+        </section>
+        <section id="opensource">
+          <h1>OpenSource</h1>
+          <p>Les auteurs de PullRequest sont à l'origine, ou contributeurs, entre autres, de ces projets:</p>
+          <ul>
+            <li><a href="http://openscales.org">OpenScales</a></li>
+            <li><a href="http://resthub.org">RestHub</a></li>
+            <li><a href="https://github.com/loicfrering/LosoBundle">LosoBundle</a></li>
+            <li><a href="https://github.com/loicfrering/losolib">LoSoLib</a></li>
+            <li><a href="https://bitbucket.org/feugy/myth">Myth</a></li>
+          </ul>
+        </section>
+      </aside>
+
+    </div>
+
+    <footer>
+      <small id="legal">© 2011 pullrequest.org</small>
+      <small id="poweredby">Propulsé par <a href="http://jekyllrb.com">Jekyll</a></small>
+    </footer>
+  </div>
+
+  <script defer src="/public/js/tags.js"></script>
+  <script defer src="/public/js/authors.js"></script>
+
+  <script>
+    var _gaq=[["_setAccount","UA-22833612-1"],["_trackPageview"]];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
+    g.src=("https:"==location.protocol?"//ssl":"//www")+".google-analytics.com/ga.js";
+    s.parentNode.insertBefore(g,s)}(document,"script"));
+  </script>
+
+  <!--[if lt IE 7 ]>
+  <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+  <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+  <![endif]-->
+
+</body>
+</html>

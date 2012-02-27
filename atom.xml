@@ -1,0 +1,257 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+ 
+ <title>PullRequest</title>
+ <link href="http://pullrequest.org/atom.xml" rel="self"/>
+ <link href="http://pullrequest.org/"/>
+ <updated>2012-02-27T21:56:53+01:00</updated>
+ <id>http://pullrequest.org/</id>
+ <author>
+   <name>Equipe PullRequest</name>
+   <email>contact@pullrequest.org</email>
+ </author>
+
+ 
+ <entry>
+   <title>Des astuces pour structurer un projet BackboneJS</title>
+   <link href="http://pullrequest.org/2012/02/25/backbone-tips-from-document-cloud.html"/>
+   <updated>2012-02-25T00:00:00+01:00</updated>
+   <id>http://pullrequest.org/2012/02/25/backbone-tips-from-document-cloud</id>
+   <content type="html">.code { font-size: 90%; } Bakbone est un projet que j&#8217;aime beaucoup car il embarque en très peu de lignes, un ensemble de bonnes pratiques qui rendra votre code bien plus lisible et compréhensible par les autres développeurs. Mais Backbone comme jQuery, vous laisse relativement libre pour structurer votre application....</content>
+   
+   <category domain="http://pullrequest.org/tags.html#backbonejs">backbonejs</category>
+   
+   <category domain="http://pullrequest.org/tags.html#javascript">javascript</category>
+   
+   <category domain="http://pullrequest.org/tags.html#webapp">webapp</category>
+   
+   <category domain="http://pullrequest.org/tags.html#spa">spa</category>
+   
+</entry>
+ 
+ <entry>
+   <title>Travis CI l'intégration continue sans effort</title>
+   <link href="http://pullrequest.org/2012/01/25/travis-ci.html"/>
+   <updated>2012-01-25T00:00:00+01:00</updated>
+   <id>http://pullrequest.org/2012/01/25/travis-ci</id>
+   <content type="html">Aujourd&#8217;hui je souhaite vous parler d&#8217;un projet qui me tient particulièrement à cœur : Travis CI, une plateforme d&#8217;intégration continue simple et efficace. C&#8217;est un projet auquel je tiens puisque j&#8217;y contribue et gère le support de PHP avec l&#8217;aide et aux côtés de l&#8217;équipe de contributeurs. Sa devise ?...</content>
+   
+   <category domain="http://pullrequest.org/tags.html#ci">ci</category>
+   
+   <category domain="http://pullrequest.org/tags.html#travis">travis</category>
+   
+   <category domain="http://pullrequest.org/tags.html#php">php</category>
+   
+   <category domain="http://pullrequest.org/tags.html#nodejs">nodejs</category>
+   
+   <category domain="http://pullrequest.org/tags.html#ruby">ruby</category>
+   
+   <category domain="http://pullrequest.org/tags.html#clojure">clojure</category>
+   
+   <category domain="http://pullrequest.org/tags.html#erlang">erlang</category>
+   
+</entry>
+ 
+ <entry>
+   <title>Organiser son code JavaScript avec RequireJS</title>
+   <link href="http://pullrequest.org/2012/01/04/requirejs.html"/>
+   <updated>2012-01-04T00:00:00+01:00</updated>
+   <id>http://pullrequest.org/2012/01/04/requirejs</id>
+   <content type="html">Je suis certain que vous aussi, vous avez connu la frénésie jQuery. Le JavaScript prend de plus en plus de place au sein de l&#8217;application. On commence à avoir des difficultés à gérer l&#8217;ordre des balises scripts, le navigateur télécharge un nombre incroyable de fichiers js et le navigateur rame,...</content>
+   
+   <category domain="http://pullrequest.org/tags.html#requirejs">requirejs</category>
+   
+   <category domain="http://pullrequest.org/tags.html#javascript">javascript</category>
+   
+   <category domain="http://pullrequest.org/tags.html#webapp">webapp</category>
+   
+</entry>
+ 
+ <entry>
+   <title>XWiki au banc de test</title>
+   <link href="http://pullrequest.org/2011/12/14/xwiki-au-banc-de-test.html"/>
+   <updated>2011-12-14T00:00:00+01:00</updated>
+   <id>http://pullrequest.org/2011/12/14/xwiki-au-banc-de-test</id>
+   <content type="html">Il existe pléthore de produits pour faire un Wiki, tous plus complets les uns que les autres. Alors en quoi XWiki se démarque-t-il ? XWiki, c&#8217;est bien plus qu&#8217;un wiki. (~~vous voila convaincus, non ?) C&#8217;est en effet ce qui est crânement annoncé sur le site xwiki.org sous l&#8217;appellation &#8220;Wiki...</content>
+   
+   <category domain="http://pullrequest.org/tags.html#xwiki">xwiki</category>
+   
+   <category domain="http://pullrequest.org/tags.html#groovy">groovy</category>
+   
+   <category domain="http://pullrequest.org/tags.html#velocity">velocity</category>
+   
+   <category domain="http://pullrequest.org/tags.html#wiki">wiki</category>
+   
+   <category domain="http://pullrequest.org/tags.html#CMS">CMS</category>
+   
+   <category domain="http://pullrequest.org/tags.html#smartdata">smartdata</category>
+   
+</entry>
+ 
+ <entry>
+   <title>Spring Data JPA</title>
+   <link href="http://pullrequest.org/2011/11/02/spring-data-jpa.html"/>
+   <updated>2011-11-02T00:00:00+01:00</updated>
+   <id>http://pullrequest.org/2011/11/02/spring-data-jpa</id>
+   <content type="html">La préparation de la version 2 de RESThub et l’objectif de remplacer Hades par Spring-data nous a amené à étudier le module spring-data-jpa et ses capacités. Présentation Le projet Spring-data est un projet visant à simplifier l’utilisation des bases relationnelles et des bases NoSQL (Graph, Key-Value, Document). En plus des...</content>
+   
+   <category domain="http://pullrequest.org/tags.html#resthub">resthub</category>
+   
+   <category domain="http://pullrequest.org/tags.html#spring-data">spring-data</category>
+   
+   <category domain="http://pullrequest.org/tags.html#QueryDsl">QueryDsl</category>
+   
+</entry>
+ 
+ <entry>
+   <title>Les subtilités des formulaires de login en JS</title>
+   <link href="http://pullrequest.org/2011/10/19/subtilites-du-login.html"/>
+   <updated>2011-10-19T00:00:00+02:00</updated>
+   <id>http://pullrequest.org/2011/10/19/subtilites-du-login</id>
+   <content type="html">Quoi de plus simple qu&#8217;un formulaire de login ? En HTML, certes, mais lorsque qu&#8217;on parle d&#8217;application riche en javascript, c&#8217;est une autre histoire. Si vous ne comprenez pas pourquoi le navigateur ne retient pas vos logins, ne propose pas le mot de passe associé, ou ne réagit pas à...</content>
+   
+   <category domain="http://pullrequest.org/tags.html#javascript">javascript</category>
+   
+   <category domain="http://pullrequest.org/tags.html#login">login</category>
+   
+   <category domain="http://pullrequest.org/tags.html#formulaire">formulaire</category>
+   
+   <category domain="http://pullrequest.org/tags.html#chrome">chrome</category>
+   
+   <category domain="http://pullrequest.org/tags.html#firefox">firefox</category>
+   
+   <category domain="http://pullrequest.org/tags.html#jQuery">jQuery</category>
+   
+</entry>
+ 
+ <entry>
+   <title>Problèmes d'encodage dans une application web</title>
+   <link href="http://pullrequest.org/2011/10/12/problemes-d-encodage.html"/>
+   <updated>2011-10-12T00:00:00+02:00</updated>
+   <id>http://pullrequest.org/2011/10/12/problemes-d-encodage</id>
+   <content type="html">Il n&#8217;y a pas de solution miracle lorsqu&#8217;on a un problème d&#8217;encodage avec son application web. Mais avec un peu de méthode et quelques pistes, on peut en retrouver la/les sources(s) et les corriger. Pour bien comprendre Tous les développeurs devraient lire au moins une fois ces articles: les chaînes...</content>
+   
+   <category domain="http://pullrequest.org/tags.html#utf-8">utf-8</category>
+   
+   <category domain="http://pullrequest.org/tags.html#encodage">encodage</category>
+   
+   <category domain="http://pullrequest.org/tags.html#webapp">webapp</category>
+   
+</entry>
+ 
+ <entry>
+   <title>Créer une API REST</title>
+   <link href="http://pullrequest.org/2011/09/21/creer-une-api-rest.html"/>
+   <updated>2011-09-21T00:00:00+02:00</updated>
+   <id>http://pullrequest.org/2011/09/21/creer-une-api-rest</id>
+   <content type="html">Les APIs REST sont de plus en plus utilisées: avec les webservices dits &#8220;techniques&#8221; (à usage interne uniquement à une plate-forme), qui viennent simplifier l&#8217;utilisation de services orientés SOAP. avec des APIs orientées &#8220;web UI&#8221;, qui sont utilisées par des applications full javascript. pour des APIs orientées applications mobiles ou...</content>
+   
+   <category domain="http://pullrequest.org/tags.html#rest">rest</category>
+   
+   <category domain="http://pullrequest.org/tags.html#api">api</category>
+   
+</entry>
+ 
+ <entry>
+   <title>Un aperçu de RESThub 2</title>
+   <link href="http://pullrequest.org/2011/09/07/resthub-2-preview.html"/>
+   <updated>2011-09-07T00:00:00+02:00</updated>
+   <id>http://pullrequest.org/2011/09/07/resthub-2-preview</id>
+   <content type="html">Après la sortie récente de RESThub 1.1, nous commençons à étudier les nouveautés que nous souhaiterions intégrer à RESThub 2. Spring 3.1 Tout d&#8217;abord, RESThub 2 se basera sur Spring 3.1 et essaiera de tirer parti des nombreuses fonctionnalités amenées par cette nouvelle version. La première nouveauté de Spring 3.1...</content>
+   
+   <category domain="http://pullrequest.org/tags.html#resthub">resthub</category>
+   
+   <category domain="http://pullrequest.org/tags.html#java">java</category>
+   
+</entry>
+ 
+ <entry>
+   <title>RESThub 1.1</title>
+   <link href="http://pullrequest.org/2011/06/28/resthub-1-1.html"/>
+   <updated>2011-06-28T00:00:00+02:00</updated>
+   <id>http://pullrequest.org/2011/06/28/resthub-1-1</id>
+   <content type="html">Après 6 mois de développement, j&#8217;ai le plaisir de vous annoncer la sortie de RESThub 1.1. Le framework a beaucoup évolué ces derniers mois, notamment suite à son utilisation sur de gros projets qui ont permis, sur base de retours développeurs, une amélioration significative du framework. La documentation, les exemples...</content>
+   
+   <category domain="http://pullrequest.org/tags.html#resthub">resthub</category>
+   
+   <category domain="http://pullrequest.org/tags.html#java">java</category>
+   
+   <category domain="http://pullrequest.org/tags.html#javascript">javascript</category>
+   
+</entry>
+ 
+ <entry>
+   <title>Web Socket - Are you plugged ?</title>
+   <link href="http://pullrequest.org/2011/04/19/web-socket-are-you-plugged.html"/>
+   <updated>2011-04-19T00:00:00+02:00</updated>
+   <id>http://pullrequest.org/2011/04/19/web-socket-are-you-plugged</id>
+   <content type="html">Depuis à peu près deux ans, je réalise un MMORPG gratuit et OpenSource avec un serveur Java et deux clients Flex (un d&#8217;administration et un de jeu). J&#8217;ai utilisé le merveilleux framework GraniteDS qui est un pont entre le java et flex, comme BlazeDS d&#8217;Adobe, avec plus de fonctionnalités encore....</content>
+   
+   <category domain="http://pullrequest.org/tags.html#java">java</category>
+   
+   <category domain="http://pullrequest.org/tags.html#javascript">javascript</category>
+   
+   <category domain="http://pullrequest.org/tags.html#mythicforge">mythicforge</category>
+   
+   <category domain="http://pullrequest.org/tags.html#graniteds">graniteds</category>
+   
+   <category domain="http://pullrequest.org/tags.html#jetty">jetty</category>
+   
+   <category domain="http://pullrequest.org/tags.html#JMS">JMS</category>
+   
+   <category domain="http://pullrequest.org/tags.html#STOMP">STOMP</category>
+   
+   <category domain="http://pullrequest.org/tags.html#websocket">websocket</category>
+   
+</entry>
+ 
+ <entry>
+   <title>Sortie de RESThub 1.1-rc1</title>
+   <link href="http://pullrequest.org/2011/04/19/resthub-1-1-rc1.html"/>
+   <updated>2011-04-19T00:00:00+02:00</updated>
+   <id>http://pullrequest.org/2011/04/19/resthub-1-1-rc1</id>
+   <content type="html">A l&#8217;occasion de la sortie de la première Release Candidate de RESThub 1.1 , voici une synthèse des principales améliorations par rapport à la version 1.0. Premier changement majeur, la séparation en 2 projets distincts (mais complémentaires) : Une stack Java basée sur Spring 3 et des webservices REST qui...</content>
+   
+   <category domain="http://pullrequest.org/tags.html#resthub">resthub</category>
+   
+   <category domain="http://pullrequest.org/tags.html#java">java</category>
+   
+   <category domain="http://pullrequest.org/tags.html#javascript">javascript</category>
+   
+</entry>
+ 
+ <entry>
+   <title>MIX-IT Un départ sur les chapeaux de roues</title>
+   <link href="http://pullrequest.org/2011/04/19/mix-it-un-depart-sur-les-chapeaux-de-roues.html"/>
+   <updated>2011-04-19T00:00:00+02:00</updated>
+   <id>http://pullrequest.org/2011/04/19/mix-it-un-depart-sur-les-chapeaux-de-roues</id>
+   <content type="html">Mardi 5 avril, j&#8217;ai eu le plaisir d&#8217;assister à un &#8216;mini-Devoxx&#8217; lyonnais : Mix-IT (lire, mixitée) Organisé par le C(lub) A(gile) R(hone) A(lpin) et le Lyon JUG, dans les locaux de l&#8217;Epitech, cette première édition de la conférence a rassemblé 250 personnes autour de 20 speakers et 4 ateliers. Vous...</content>
+   
+   <category domain="http://pullrequest.org/tags.html#conference">conference</category>
+   
+   <category domain="http://pullrequest.org/tags.html#mix-it">mix-it</category>
+   
+   <category domain="http://pullrequest.org/tags.html#agile">agile</category>
+   
+   <category domain="http://pullrequest.org/tags.html#spock">spock</category>
+   
+   <category domain="http://pullrequest.org/tags.html#tests">tests</category>
+   
+   <category domain="http://pullrequest.org/tags.html#tdd">tdd</category>
+   
+   <category domain="http://pullrequest.org/tags.html#bdd">bdd</category>
+   
+   <category domain="http://pullrequest.org/tags.html#ergonomie">ergonomie</category>
+   
+   <category domain="http://pullrequest.org/tags.html#clojure">clojure</category>
+   
+   <category domain="http://pullrequest.org/tags.html#machine-learning">machine-learning</category>
+   
+   <category domain="http://pullrequest.org/tags.html#mahout">mahout</category>
+   
+   <category domain="http://pullrequest.org/tags.html#devops">devops</category>
+   
+</entry>
+ 
+ 
+</feed>

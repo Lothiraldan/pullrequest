@@ -1,0 +1,250 @@
+<!doctype html>
+<!-- paulirish.com/2008/conditional-stylesheets-vs-css-hacks-answer-neither/ -->
+<!--[if lt IE 7]> <html class="no-js ie6 oldie" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js ie7 oldie" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js ie8 oldie" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+  <title>.::PullRequest.org::. Créer une API REST</title>
+  <meta name="description" content="">
+  <meta name="author" content="PullRequest team">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <link rel="stylesheet" href="/public/css/style.css">
+  <link rel="stylesheet" href="/public/css/syntax.css">
+
+  <script src="/public/js/libs/modernizr.custom.47336.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+  <script>window.jQuery || document.write('<script src="/public/js/libs/jquery-1.6.2.min.js"><\/script>')</script>
+</head>
+
+<body>
+
+  <div id="container">
+    <header>
+      <h1><a href="/" title="Page d'accueil"><img src="/public/img/pullrequest-logo.png" alt="PullRequest"/></a></h1>
+      <a href="http://github.com/pullrequest"><img style="position: absolute; top: 0; right: 0; border: 0; z-index: 1;" src="https://a248.e.akamai.net/assets.github.com/img/abad93f42020b733148435e2cd92ce15c542d320/687474703a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f677265656e5f3030373230302e706e67" alt="Fork me on GitHub"></a>
+    </header>
+
+    <div id="main" role="main">
+      <section id="content">
+        
+<article>
+  <header>
+    <h1><a href="/2011/09/21/creer-une-api-rest.html">Créer une API REST</a></h1>
+    <p>
+      <time datetime="2011-09-21" pubdate="pubdate">21 Sep 2011</time>
+      <span class="author"><a href="/authors.html#bclozel">Brian Clozel</a></span>
+      <span class="comments"><a href="#disqus_thread" title="Voir les commentaires">Commentaires</a></span>
+    </p>
+  </header>
+  <p>Les APIs REST sont de plus en plus utilisées:</p>
+
+<ul>
+<li>avec les webservices dits &#8220;techniques&#8221; (à usage interne uniquement à une plate-forme), qui viennent simplifier l&#8217;utilisation de services orientés SOAP.</li>
+
+<li>avec des APIs orientées &#8220;web UI&#8221;, qui sont utilisées par des applications full javascript.</li>
+
+<li>pour des APIs orientées applications mobiles ou utilisation par une grande variété de développeurs tiers.</li>
+</ul>
+
+<p>Le terme &#8220;API REST&#8221; est très conceptuel, voire polémique; les concepts derrière REST ne sont pas suffisants pour répondre à tous vos besoins. Cet article donne quelques pistes pour la conception et la mise en oeuvre d&#8217;une API de ce type.</p>
+
+<p>Pas besoin de lire <a href='http://www.ics.uci.edu/~fielding/pubs/dissertation/top.htm'>la thèse de Roy Fielding</a> ou de suivre à la lettre tous les dogmes REST - mais quelques règles simples ne sont pas à négliger.</p>
+
+<h2 id='rgle_1_respecter_les_grands_principes_rest'>Règle #1: respecter les grands principes REST</h2>
+
+<pre><code>GET http://example.org/user/12</code></pre>
+
+<p>Une API REST doit avant tout servir à manipuler des <strong>ressources</strong> (ici, un utilisateur) avec des verbes (ici, GET). Trop souvent, les concepteurs d&#8217;API ont tendance à inclure des verbes dans les URIs.</p>
+
+<p>L&#8217;API Flickr est un bon exemple de pièges à éviter; on retrouve dans les URIs des noms de méthodes (en fait, cette API est plus proche de RPC que de REST).</p>
+
+<pre><code>GET http://api.flickr.com/services/rest/?method=flickr.photos.delete&amp;api_key=aaabbbccc&amp;photo_id=12 (API Flickr)
+DELETE http://api.flickr.com/photos/12?api_key=aaabbbccc (une idée d&#39;amélioration)</code></pre>
+
+<p>Très souvent, éviter ce piège revient à créer de nouvelles ressources; un exemple avec une API orientée e-commerce:</p>
+
+<pre><code>GET http://example.org/order/144/pay (payer une commande existante)</code></pre>
+
+<p>En fait, créer une ressource &#8220;paiement&#8221; peut être une bonne idée, ce qui permettra de vérifier le status de ce paiement plus tard.</p>
+
+<pre><code>POST http://example.org/payment/?order=144 (création d&#39;un paiement)
+GET http://example.org/payment/23 (renvoie les informations sur le paiement)</code></pre>
+
+<p>Des articles entiers traitent du <a href='http://warpspire.com/posts/url-design/'>design d&#8217;URLs</a>.</p>
+
+<h2 id='rgle_2_laisser_http_faire_son_travail'>Règle #2: laisser HTTP faire son travail</h2>
+
+<p>HTTP a déjà les fonctionnalités, il est omniprésent et déjà testé. HTTP, c&#8217;est entre autres le content negiciation, le cache de ressources et le versioning (via Etags ou Cache-control), des codes d&#8217;erreurs explicites&#8230; pourquoi le réinventer?</p>
+
+<p>Dans le doute, on pourra toujours revoir les <a href='http://en.wikipedia.org/wiki/List_of_HTTP_status_codes'>status HTTP</a> et les <a href='http://en.wikipedia.org/wiki/List_of_HTTP_header_fields'>headers HTTP</a> pour voir si HTTP est déjà équipé pour un besoin particulier.</p>
+
+<h2 id='rgle_3_garder_une_architecture_oriente_web'>Règle #3: garder une architecture orientée web</h2>
+
+<p>Le web est essentiellement:</p>
+
+<ul>
+<li>stateless. Oubliez les sessions et la sauvegarde d&#8217;état entre différentes requêtes. Si vous voulez épargner votre base de données, de nombreux systèmes de cache sont adaptés à ce besoin (redis, memcached, ehcache&#8230;).</li>
+
+<li>oriénté ressources. L&#8217;important est de ne pas laisser des conventions de l&#8217;application venir polluer les interactions client/serveur. Cet item n&#8217;est pas facile à qualifier; mais généralement, une API difficile à documenter est un signe.</li>
+</ul>
+
+<h2 id='rgle_simple_commencer_par_comprendre_les_utilisateurs'>Règle simple: commencer par comprendre les utilisateurs</h2>
+
+<p>Avant de commencer la conception des ressources et des URIs, il faut tout d&#8217;abord qualifier ses utilisateurs (qui/quoi va utiliser cette API?) et quels services nous souhaitons leur rendre. Définir quelques priorités sur les items suivants permet de concentrer ses efforts sur les aspects importants pour notre API:</p>
+
+<p><img alt='APIs REST' src='/public/img/2011-09-21-creer-une-api-rest/api-rest.png' /></p>
+
+<p>Ce schéma identifie des zones où répartir ses efforts, selon l&#8217;API REST que l&#8217;on souhaite créer. Un exemple avec l&#8217;item &#8220;usage&#8221;: si l&#8217;API doit être intégrée dans des sites tiers, il est préférable de concentrer des efforts sur l&#8217;utilisation de <a href='http://en.wikipedia.org/wiki/JSONP'>JSONP</a> ou <a href='http://en.wikipedia.org/wiki/Cross-Origin_Resource_Sharing'>CORS</a> afin d&#8217;éviter les limitations de sécurité des navigateurs web.</p>
+
+<h2 id='un_dernier_mot'>Un dernier mot</h2>
+
+<p>Certains problèmes de conception sont récurrents dans les APIs REST, et les opinions sont souvent bien trop tranchées.</p>
+
+<h3 id='le_versioning_revient_souvent_dans_les_proccupations'>Le versioning revient souvent dans les préoccupations</h3>
+
+<ul>
+<li>pour identifier différentes versions d&#8217;une API, l&#8217;utilisation d&#8217;un préfixe est <a href='http://stackoverflow.com/questions/389169/best-practices-for-api-versioning'>souvent recommandé</a></li>
+
+<li>lorsque la composition des ressources varie, l&#8217;utilisation du content-type HTTP personnalisé est la clé (par exemple: <code>Accept: application/vnd.pullrequest-v2+json</code>)</li>
+
+<li>pour le versioning de ressources (suivre les modifications d&#8217;une ressource particulière), l&#8217;utilisation des Etags (pour le cache) et/ou d&#8217;un numéro de version dans votre ressource sont suffisants</li>
+</ul>
+
+<h3 id='documentation_et_dcouvrabilit'>Documentation et &#8220;découvrabilité&#8221;</h3>
+
+<p>La documentation est un aspect essentiel d&#8217;une API REST. Certains prennent le parti d&#8217;automatiser et d&#8217;outiller un maximum la documentation: par exemple, avec <a href='http://www.lunatech-labs.com/open-source/jax-doclets'>jax-doclets</a>.</p>
+
+<p>Pour aller plus loin, les APIs peuvent apporter une &#8220;découvrabilité&#8221;: permettre au protocole HTTP de documenter l&#8217;utilisation de l&#8217;API. En clair, donner au client REST des indications sur les actions possibles via les headers réponse HTTP. Martin Fowler l&#8217;explique bien dans un article sur le <a href='http://martinfowler.com/articles/richardsonMaturityModel.html'>Richardson Maturity Model</a>.</p>
+
+<h3 id='en_cas_de_doute'>En cas de doute&#8230;</h3>
+
+<p>Il est souvent utile de se référer à une API REST très utilisée et reconnue: l&#8217;<a href='http://developer.github.com/'>API github</a> est considérée comme une des meilleures à ce jour.</p>
+
+<p>Aussi, je vous recommande la lecture des articles de Steve Klabnik:</p>
+
+<ul>
+<li><a href='http://blog.steveklabnik.com/2011/07/03/nobody-understands-rest-or-http.html'>&#8220;nobody understands REST or HTTP&#8221;</a></li>
+
+<li><a href='http://blog.steveklabnik.com/2011/08/07/some-people-understand-rest-and-http.html'>&#8220;some people understand REST and HTTP&#8221;</a></li>
+</ul>
+
+<h2 id='ressources_utiles'>Ressources utiles</h2>
+
+<ul>
+<li>Tester son API REST depuis son navigateur avec une <a href='https://chrome.google.com/webstore/detail/cokgbflfommojglbmbpenpphppikmonn'>extension Chrome</a> ou avec CURL!</li>
+
+<li>Google a beaucoup travaillé sur les aspects RDF/atomPUB avec <a href='http://code.google.com/intl/fr-FR/apis/gdata/'>Gdata</a></li>
+
+<li>Le projet Jersey a de <a href='http://download.java.net/maven/2/com/sun/jersey/samples/jersey-samples/'>nombreux exemples d&#8217;APIs REST</a> sur des aspects particuliers, dont <a href='http://download.java.net/maven/2/com/sun/jersey/experimental/hypermedia-action/hypermedia-action-sample/'>Hypermedia</a></li>
+
+<li>Mettre en place un <a href='http://stackoverflow.com/questions/667508/whats-a-good-rate-limiting-algorithm'>&#8220;rate limiting&#8221;</a> sur son API peut aussi bénéficier d&#8217;un cache distribué (memcached, redis&#8230;)</li>
+
+<li>Selon la plate-forme cible, <a href='http://jersey.java.net/nonav/documentation/latest/json.html#d4e955'>le format JSON</a> peut être légèrement différent.</li>
+</ul>
+  <footer>
+    <section class="tags">
+      <span>Tags :</span>
+<ul>
+  
+    <li>
+        <a href="tags.html#rest" title="Voir les posts ayant le tag rest">rest</a>
+    </li>
+  
+    <li>
+        <a href="tags.html#api" title="Voir les posts ayant le tag api">api</a>
+    </li>
+  
+</ul>
+
+    </section>
+    <section id="disqus_thread" class="comments">
+      <script type="text/javascript">
+  var disqus_shortname = 'pullrequest';
+  var disqus_identifier = '/2011/09/21/creer-une-api-rest';
+  $.getScript("http://pullrequest.disqus.com/embed.js");
+</script>
+<noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus</a>.</noscript>
+
+    </section>
+  </footer>
+</article>
+
+      </section><!--
+
+   --><aside>
+        <section id="about">
+          <h1>A propos</h1>
+          <p>PullRequest est un blog de développeurs ouvert à toute contribution appropriée.</p>
+        </section>
+        <section id="follow">
+          <h1>Suivez nous!</h1>
+          <ul>
+            <li>
+              <a href="http://twitter.com/pullrequest" class="twitter-follow-button" data-show-count="false" data-lang="fr">Follow @pullrequest</a>
+              <script src="http://platform.twitter.com/widgets.js" type="text/javascript"></script>
+            </li>
+            <li class="feed">
+              <a rel="alternate" type="application/rss+xml" href="http://feeds.feedburner.com/pullrequest/blog-posts">abonnement RSS</a>
+            </li>
+          </ul>
+        </section>
+        <section id="contribute">
+          <h1>Participer</h1>
+          <p>
+            Les articles sont écrits en <a href="http://daringfireball.net/projects/markdown/syntax">MarkDown</a> et stockés dans un repository Git sur <a href="http://github.com/pullrequest/pullrequest.github.com">Github</a>.
+            N'hésitez pas à <strong>forker</strong> puis à faire une <strong><a href="https://github.com/pullrequest/pullrequest.github.com/pull/new/master">Pull Request</a></strong> ;)
+          </p>
+        </section>
+        <section id="licensing">
+          <h1>Licence</h1>
+          <p>
+            Les articles sont mis à disposition selon les termes de la <a rel="license" href="http://creativecommons.org/licenses/by/2.0/fr/">Licence Creative Commons Paternité 2.0 France</a>.
+            <a rel="license" href="http://creativecommons.org/licenses/by/2.0/fr/">
+              <br><img alt="Contrat Creative Commons" style="border-width:0" src="http://i.creativecommons.org/l/by/2.0/fr/88x31.png" />
+            </a>
+          </p>
+        </section>
+        <section id="opensource">
+          <h1>OpenSource</h1>
+          <p>Les auteurs de PullRequest sont à l'origine, ou contributeurs, entre autres, de ces projets:</p>
+          <ul>
+            <li><a href="http://openscales.org">OpenScales</a></li>
+            <li><a href="http://resthub.org">RestHub</a></li>
+            <li><a href="https://github.com/loicfrering/LosoBundle">LosoBundle</a></li>
+            <li><a href="https://github.com/loicfrering/losolib">LoSoLib</a></li>
+            <li><a href="https://bitbucket.org/feugy/myth">Myth</a></li>
+          </ul>
+        </section>
+      </aside>
+
+    </div>
+
+    <footer>
+      <small id="legal">© 2011 pullrequest.org</small>
+      <small id="poweredby">Propulsé par <a href="http://jekyllrb.com">Jekyll</a></small>
+    </footer>
+  </div>
+
+  <script defer src="/public/js/tags.js"></script>
+  <script defer src="/public/js/authors.js"></script>
+
+  <script>
+    var _gaq=[["_setAccount","UA-22833612-1"],["_trackPageview"]];
+    (function(d,t){var g=d.createElement(t),s=d.getElementsByTagName(t)[0];g.async=1;
+    g.src=("https:"==location.protocol?"//ssl":"//www")+".google-analytics.com/ga.js";
+    s.parentNode.insertBefore(g,s)}(document,"script"));
+  </script>
+
+  <!--[if lt IE 7 ]>
+  <script src="//ajax.googleapis.com/ajax/libs/chrome-frame/1.0.3/CFInstall.min.js"></script>
+  <script>window.attachEvent('onload',function(){CFInstall.check({mode:'overlay'})})</script>
+  <![endif]-->
+
+</body>
+</html>

@@ -1,0 +1,8 @@
+<span>Tags :</span>
+<ul>
+  {% for tag in post.tags %}
+    <li>
+        <a href="tags.html#{{ tag }}" title="Voir les posts ayant le tag {{ tag }}">{{ tag }}</a>
+    </li>
+  {% endfor %}
+</ul>

@@ -1,6 +1,6 @@
 pygments: true
 paginate: 4
-BASE_PATH: /pullrequest
+baseurl: /pullrequest
 authors:
   loicfrering:
     fullname: Loïc Frering

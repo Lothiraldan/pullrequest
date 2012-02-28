@@ -4,10 +4,10 @@ layout: default
 {% assign post = page %}
 <article>
   <header>
-    <h1><a href="{{ BASE_PATH }}{{ post.url }}">{{ post.title }}</a></h1>
+    <h1><a href="{{ BASE_URL }}{{ post.url }}">{{ post.title }}</a></h1>
     <p>
       <time datetime="{{ post.date | date:'%Y-%m-%d' }}" pubdate="pubdate">{{ post.date | date_to_string }}</time>
-      <span class="author"><a href="{{ BASE_PATH }}/authors.html#{{ post.author }}">{{ site.authors[post.author].fullname }}</a></span>
+      <span class="author"><a href="{{ BASE_URL }}/authors.html#{{ post.author }}">{{ site.authors[post.author].fullname }}</a></span>
       <span class="comments"><a href="#disqus_thread" title="Voir les commentaires">Commentaires</a></span>
     </p>
   </header>

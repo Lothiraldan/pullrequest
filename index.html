@@ -5,15 +5,15 @@ title: Pull Request
 {% for post in site.posts %}
   <article>
     <header>
-      <h1><a href="{{ BASE_URL }}{{ post.url }}">{{ post.title }}</a></h1>
+      <h1><a href="/pullrequest/{{ post.url }}">{{ post.title }}</a></h1>
       <p>
         <time datetime="{{ post.date | date:'%Y-%m-%d' }}" pubdate="pubdate">{{ post.date | date_to_string }}</time>
-        <span class="author"><a href="{{ BASE_URL }}/authors.html#{{ post.author }}">{{ site.authors[post.author].fullname }}</a></span>
-        <span class="comments"><a href="{{ BASE_URL }}{{ post.url }}#disqus_thread" title="Voir les commentaires">Commentaires</a></span>
+        <span class="author"><a href="/pullrequest//authors.html#{{ post.author }}">{{ site.authors[post.author].fullname }}</a></span>
+        <span class="comments"><a href="/pullrequest/{{ post.url }}#disqus_thread" title="Voir les commentaires">Commentaires</a></span>
       </p>
     </header>
     {{ post.content | truncatewords:60 }}
-    <p><a href="{{ BASE_URL }}{{ post.url }}" class="read-more" title="Lire l'article complet">Lire la suite</a></p>
+    <p><a href="/pullrequest/{{ post.url }}" class="read-more" title="Lire l'article complet">Lire la suite</a></p>
     <footer>
       <section class="tags">
         {% include tags.html %}

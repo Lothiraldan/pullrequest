@@ -8,7 +8,7 @@ title: Pull Request
     <ul class="tags">
       {% for tag in site.tags %}
         <li id="tag-{{ tag[0] }}">
-          <a href="{{ BASE_URL }}tags.html#{{ tag[0] }}" title="Voir les posts ayant le tag {{ tag[0] }}">{{ tag[0] }}</a>
+          <a href="/pullrequest/tags.html#{{ tag[0] }}" title="Voir les posts ayant le tag {{ tag[0] }}">{{ tag[0] }}</a>
         </li>
       {% endfor %}
     </ul>
@@ -18,7 +18,7 @@ title: Pull Request
       <li id="{{ tag[0] }}">{{ tag[0] }}:
         <ul>
           {% for post in tag[1] %}
-            <li><a href="{{ BASE_URL }}{{ post.url }}">{{ post.title }}</a></li>
+            <li><a href="/pullrequest/{{ post.url }}">{{ post.title }}</a></li>
           {% endfor %}
         </ul>
       </li>
